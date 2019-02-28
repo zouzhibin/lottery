@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    #wrap-log{
+        width: 306px;
+        height: 306px;
+        background: red;
+        margin: 100px auto;
+    }
+    .inner{
+        border: 1px solid black;
+        width: 100px;
+        height: 100px;
+        background: yellow;
+        float: left;
+    }
+    .active{
+        background: aqua;
+    }
+</style>
+<body>
+<div id="wrap-log">
+    <div data-name="0" class="inner active"></div>
+    <div data-name="1" class="inner"></div>
+    <div data-name="2" class="inner"></div>
+    <div data-name="3" class="inner"></div>
+    <div data-name="4" class="inner"></div>
+    <div data-name="5" class="inner"></div>
+    <div data-name="6" class="inner"></div>
+    <div data-name="7" class="inner"></div>
+    <div data-name="8" class="inner"></div>
+    <button id="btnLottery">点击抽奖</button>
+</div>
+<script>
+    window.onload = function() {
+        let btnLottery = document.querySelector("#btnLottery")
+        let inner = document.querySelectorAll(".inner")
+        var time,time1,time2,time4;
+        let defaultConfig = {
+            index: 0,
+            speed:1000,
+            isRuning:false,
+            upMax:100,   // 速度上限
+        }
+        // 点击事件
+        function btnClickAction() {
+            rollup()
+            btnLottery.removeEventListener("click",btnClickAction)
+        }
+        // 绑定点击事件
+        btnLottery.addEventListener("click", btnClickAction)
+        function rollup() {
+            inner[_index()].className  = "inner "
+            ++defaultConfig.index
+            inner[_index()].className  = "inner active"
+            time = setTimeout(() => {
+                // if (defaultConfig.index > 8) {
+                //     clearTimeout(time)
+                // }else{
+                //
+                // }
+                rollup()
+            }, defaultConfig.speed)
+            if(!defaultConfig.isRuning){
+                _up()
+                defaultConfig.isRuning = true
+            }
+        }
+       function _up(){
+            if(defaultConfig.speed<=defaultConfig.upMax){
+                _constant()
+
+            }else{
+                defaultConfig.speed-=100
+                time1 = setTimeout(()=>{
+                    _up()
+                },defaultConfig.speed)
+
+            }
+        }
+        // 匀速
+        function _constant(){
+            clearTimeout(time1)
+            time2 = setTimeout(()=>{_down()},3000)
+        }
+        function _stop(){
+            clearTimeout(time)
+            clearTimeout(time4)
+        }
+        function _down(){
+            if(defaultConfig.speed>1000&&_index() === 7){
+                _stop()
+            }else{
+                clearTimeout(time2)
+                defaultConfig.speed+=100
+                time4 = setTimeout(()=>{_down()},defaultConfig.speed)
+            }
+
+            console.log(defaultConfig.speed,_index(),defaultConfig.index)
+        }
+        // 获取_index
+        function _index() {
+            return defaultConfig.index%9
+        }
+        // 进行抽奖加速
+
+
+    }
+
+</script>
+</body>
+</html>
