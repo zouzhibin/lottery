@@ -50,23 +50,19 @@
             isRuning:false,
             upMax:100,   // 速度上限
         }
-        // 点击事件
+        // 绑定点击开始抽奖事件
         function btnClickAction() {
             rollup()
-            btnLottery.removeEventListener("click",btnClickAction)
         }
         // 绑定点击事件
         btnLottery.addEventListener("click", btnClickAction)
+        // 当点击抽奖的时候 开启一个定时器运动 把当前的class去掉 下一个添加新的class
         function rollup() {
             inner[_index()].className  = "inner "
             ++defaultConfig.index
+            btnLottery.removeEventListener("click",btnClickAction) //  // 禁用抽奖 防止重复进行点击
             inner[_index()].className  = "inner active"
             time = setTimeout(() => {
-                // if (defaultConfig.index > 8) {
-                //     clearTimeout(time)
-                // }else{
-                //
-                // }
                 rollup()
             }, defaultConfig.speed)
             if(!defaultConfig.isRuning){
@@ -74,10 +70,10 @@
                 defaultConfig.isRuning = true
             }
         }
+        // 进行加速运动
        function _up(){
             if(defaultConfig.speed<=defaultConfig.upMax){
                 _constant()
-
             }else{
                 defaultConfig.speed-=100
                 time1 = setTimeout(()=>{
@@ -86,15 +82,19 @@
 
             }
         }
-        // 匀速
+        // 有3秒时间进行匀速运动
         function _constant(){
             clearTimeout(time1)
             time2 = setTimeout(()=>{_down()},3000)
         }
+        // 停止活动了 进行运动停止
         function _stop(){
             clearTimeout(time)
             clearTimeout(time4)
+            btnLottery.addEventListener("click",btnClickAction)
+            defaultConfig.isRuning = false
         }
+        // 判断在某个条件下是否该进行停止跑马灯效果运动
         function _down(){
             if(defaultConfig.speed>1000&&_index() === 7){
                 _stop()
@@ -103,10 +103,9 @@
                 defaultConfig.speed+=100
                 time4 = setTimeout(()=>{_down()},defaultConfig.speed)
             }
-
             console.log(defaultConfig.speed,_index(),defaultConfig.index)
         }
-        // 获取_index
+        // 获取_index 进行取余来代替index 余数肯定不会大于他的最大个数
         function _index() {
             return defaultConfig.index%9
         }
