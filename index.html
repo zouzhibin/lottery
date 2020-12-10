@@ -139,11 +139,12 @@
             // 判断在某个条件下是否该进行停止跑马灯效果运动
             function _down() {
                 // 可以判断在某个值进行停下来
+                console.log(Math.round(Math.random()*inner.length))
                 if (defaultConfig.speed > defaultConfig.downMax && _index() === Math.round(Math.random()*inner.length)) {
                     _stop()
                 } else {
                     clearTimeout(time2)
-                    defaultConfig.speed += 100
+                    defaultConfig.speed += 50
                     time4 = setTimeout(() => { _down() }, defaultConfig.speed)
                 }
                 console.log(defaultConfig.speed, _index(), defaultConfig.index)
