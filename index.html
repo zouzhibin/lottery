@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    #wrap-log {
+        width: 310px;
+        height: 310px;
+        background: #d80215;
+        margin: 100px auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 15px;
+        border-radius: 4px;
+        padding-left: 2px;
+    }
+
+    .inner {
+        border-radius: 8px;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        font-size: 18px;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        background: #ffeeee;
+        float: left;
+        margin: 1px;
+    }
+
+    .active {
+        background: aqua;
+    }
+
+    #btnLottery {
+        border-radius: 8px;
+        width: 100px;
+        height: 100px;
+        font-size: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 1px;
+        background: yellow;
+        float: left;
+    }
+</style>
+
+<body>
+    <div id="wrap-log">
+        <div>
+            <div data-name="0" class="inner active">啥也没中在抽一次</div>
+            <div data-name="1" class="inner">请我喝奶茶</div>
+            <div data-name="2" class="inner">请我吃火锅</div>
+            <div data-name="3" class="inner">我请你吃烤肉</div>
+            <div id="btnLottery">点击抽奖</div>
+            <div data-name="4" class="inner">我请你喝白开水</div>
+            <div data-name="5" class="inner">请我吃小龙虾</div>
+            <div data-name="6" class="inner">我请你吃狗粮</div>
+            <div data-name="7" class="inner">请我吃烤鱼</div>
+        </div>
+
+
+    </div>
+    <script>
+        window.onload = function () {
+            let btnLottery = document.querySelector("#btnLottery")
+            let inner = document.querySelectorAll(".inner")
+            var time, time1, time2, time4;
+            let defaultConfig = {
+                index: 0, // 初始位置
+                speed: 200, // 当前转动速度
+                downMax: 1000, // 减速上限
+                waiting: 500,  // 减速上限
+                isRuning: false, // 当前是否正在抽奖
+                upMax: 100,   // 速度上限
+            }
+
+            // 绑定点击开始抽奖事件
+            function btnClickAction() {
+                rollup()
+            }
+            // 绑定点击事件
+            btnLottery.addEventListener("click", btnClickAction)
+
+            // 当点击抽奖的时候 开启一个定时器运动 把当前的class去掉 下一个添加新的class
+            function rollup() {
+                inner[_index()].className = "inner "
+                ++defaultConfig.index
+                btnLottery.removeEventListener("click", btnClickAction) //  // 禁用抽奖 防止重复进行点击
+                inner[_index()].className = "inner active"
+                time = setTimeout(() => {
+                    rollup()
+                }, defaultConfig.speed)
+                // 当前是否正在抽奖  如果正在抽奖
+                if (!defaultConfig.isRuning) {
+                    _up()
+                    defaultConfig.isRuning = true
+                }
+            }
+            // 进行加速运动
+            function _up() {
+                // 是否当前的转速时间小于最大的速度
+                if (defaultConfig.speed <= defaultConfig.upMax) {
+                    _constant()
+                } else {
+                    defaultConfig.speed -= 50
+                    time1 = setTimeout(() => {
+                        _up()
+                    }, defaultConfig.speed)
+
+                }
+            }
+            // 有3秒时间进行匀速运动
+            function _constant() {
+                clearTimeout(time1)
+                time2 = setTimeout(() => { _down() }, defaultConfig.waiting)
+            }
+            // 停止活动了 进行运动停止 转盘停止，还原设置
+            function _stop() {
+                clearTimeout(time)
+                clearTimeout(time4)
+                btnLottery.addEventListener("click", btnClickAction)
+                defaultConfig.isRuning = false
+                defaultConfig.speed = 200
+                alert(`${inner[_index()].innerHTML}`)
+            }
+            // 判断在某个条件下是否该进行停止跑马灯效果运动
+            function _down() {
+                // 可以判断在某个值进行停下来
+                if (defaultConfig.speed > defaultConfig.downMax && _index() === Math.round(Math.random()*inner.length)) {
+                    _stop()
+                } else {
+                    clearTimeout(time2)
+                    defaultConfig.speed += 100
+                    time4 = setTimeout(() => { _down() }, defaultConfig.speed)
+                }
+                console.log(defaultConfig.speed, _index(), defaultConfig.index)
+            }
+            // 获取_index 进行取余来代替index 余数肯定不会大于他的最大个数
+            function _index() {
+                return defaultConfig.index % inner.length
+            }
+           
+
+
+        }
+
+    </script>
+</body>
+
+</html>
